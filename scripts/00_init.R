@@ -3,3 +3,11 @@
 
 # Author: N. Chan
 # Purpose: Initializes project and installs required dependencies.
+
+source(paste0(getwd(), "/R/functions.R"))
+
+required_packages <- 
+  c("tidyverse"
+    )
+
+using(required_packages)
