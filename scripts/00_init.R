@@ -6,8 +6,9 @@
 
 source(paste0(getwd(), "/R/functions.R"))
 
-required_packages <- 
-  c("tidyverse"
-    )
+required_packages <-
+  c("tidyverse",
+    "readxl")
 
+# Check, install, and load required packages
 using(required_packages)
