@@ -63,3 +63,55 @@ using <- function(...) {
   
   return(invisible(NULL))
 }
+
+
+#' @title Compute the statistical mode of an R object
+#'
+#' @description Computes the statistical mode of an R object.
+#'
+#' @param x An R object that can be interpreted as factors.
+#'
+#' @return A table with the name of the most frequent element and its respective
+#'   count.
+#'
+#' @examples
+#' \dontrun{
+#' mydata <- c(1,1,1,1,2,2,2,3,3)
+#' mode_stat(mydata)
+#' }
+#'
+#' @author N. Chan
+#' @export
+#'
+
+mode_stat <- function(x) {
+  freqtable <- table(x)
+  return(freqtable[which.max(freqtable)])
+}
+
+
+#' @title Compute the geometric mean of a numeric object
+#'
+#' @description Computes the statistical mode of an R object.
+#'
+#' @param x An R object that can be coerced into a numeric vector.
+#'
+#' @return A double representing the geometric mean.
+#'
+#' @examples
+#' \dontrun{
+#' mydata <- c(1,1,1,1,2,2,2,3,3)
+#' geo_mean(mydata)
+#' }
+#'
+#' @author N. Chan
+#' @export
+#'
+
+geo_mean <- function(x) {
+  # Taking the mean of the natural log then raising e to the mean is more 
+  # computationally efficient than taking the product of all elements of x
+  # and taking the n-th root.
+  gm <- exp(mean(log(x)))
+  return(gm)
+}
