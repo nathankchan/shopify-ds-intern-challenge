@@ -6,7 +6,7 @@
 
 source(paste0(getwd(), "/scripts/00_init.R"))
 
-shopdata <-
+shopifydata <-
   read_excel(
     paste0(
       getwd(),
