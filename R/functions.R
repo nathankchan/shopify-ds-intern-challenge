@@ -92,7 +92,7 @@ mode_stat <- function(x) {
 
 #' @title Compute the geometric mean of a numeric object
 #'
-#' @description Computes the statistical mode of an R object.
+#' @description Computes the geometric mean of a numeric object.
 #'
 #' @param x An R object that can be coerced into a numeric vector.
 #'
@@ -115,3 +115,67 @@ geo_mean <- function(x) {
   gm <- exp(mean(log(x)))
   return(gm)
 }
+
+
+#' @title Compute the harmonic mean of a numeric object
+#'
+#' @description Computes the harmonic mean of a numeric object.
+#'
+#' @param x An R object that can be coerced into a numeric vector.
+#'
+#' @return A double representing the harmonic mean.
+#'
+#' @examples
+#' \dontrun{
+#' mydata <- c(1,1,1,1,2,2,2,3,3)
+#' har_mean(mydata)
+#' }
+#'
+#' @author N. Chan
+#' @export
+#'
+
+har_mean <- function(x) {
+  hm <- 1/(mean(1/x))
+  return(hm)
+}
+
+#' @title Provides summary statistics 
+#'
+#' @description Wrapper for summary(), mode_stat(), geo_mean(), and har_mean()
+#'
+#' @param x An R object that can be coerced into a numeric vector.
+#'
+#' @return A data frame containing two columns (name of statistic and value)
+#'
+#' @examples
+#' \dontrun{
+#' mydata <- c(1,1,1,1,2,2,2,3,3)
+#' summ_stats(mydata)
+#' }
+#'
+#' @author N. Chan
+#' @export
+#'
+
+summ_stats <- function(x) {
+  
+  if(!is.numeric(x)) {
+    stop("x must be a numeric object.")
+  }
+  
+  summ <- summary(x)
+  mo <- as.numeric(names(mode_stat(x)))
+  gm <- geo_mean(x)
+  hm <- har_mean(x)
+  
+  out <- data.frame(
+    stat_name = c(names(summ), "Mode", "Geo. Mean", "Har. Mean"),
+    value = c(as.vector(summ), mo, gm, hm)
+  )
+  
+  out[which(out[,"stat_name"] == "Mean"), "stat_name"] <- "A. Mean"
+  
+  return(out)
+}
+
