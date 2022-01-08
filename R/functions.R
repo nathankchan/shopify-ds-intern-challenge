@@ -54,14 +54,41 @@ using <- function(...) {
         collapse = ""
       )
     
-    if (!(askYesNo(libsmsg, default = FALSE) %in% c(NA, FALSE))) {
-      install.packages(need)
-      lapply(need, require, character.only = TRUE)
+    # Checks if R is in interactive mode. If yes, then prompt user for
+    # interactive response. If no, prompt user for input from stdin.
+    if (interactive()) {
+      if (!(askYesNo(libsmsg, default = FALSE) %in% c(NA, FALSE))) {
+        install.packages(need)
+        lapply(need, require, character.only = TRUE)
+      } else {
+        stop("required packages were not installed or loaded")
+      }
+      
+    } else {
+      cat(libsmsg, "(yes/No/cancel) ")
+      response <- readLines("stdin", n = 1)
+      input <- pmatch(tolower(response), c("yes", "no", "cancel"))
+      
+      if (!nchar(response) | input %in% c(2, 3)) {
+        stop("required packages were not installed or loaded")
+      } else if (is.na(input)) {
+        stop("Unrecognized response ", dQuote(response))
+      } else {
+        install.packages(need)
+        lapply(need, require, character.only = TRUE)
+      }
     }
-    
+  
   }
   
   return(invisible(NULL))
+}
+
+
+user_input <- function(prompt) {
+  if(interactive()) {
+    return(readlin)
+  }
 }
 
 
@@ -170,11 +197,15 @@ summ_stats <- function(x) {
   hm <- har_mean(x)
   
   out <- data.frame(
-    stat_name = c(names(summ), "Mode", "Geo. Mean", "Har. Mean"),
-    value = c(as.vector(summ), mo, gm, hm)
+    Statistic = c(names(summ), "Mode", "Geometric Mean", "Harmonic Mean"),
+    Value = c(as.vector(summ), mo, gm, hm)
   )
   
-  out[which(out[,"stat_name"] == "Mean"), "stat_name"] <- "A. Mean"
+  out[which(out[,1] == "Min."), 1] <- "Minimum"
+  out[which(out[,1] == "1st Qu."), 1] <- "1st Quartile"
+  out[which(out[,1] == "Mean"), 1] <- "Arithmetic Mean"
+  out[which(out[,1] == "3rd Qu."), 1] <- "3rd Quartile"
+  out[which(out[,1] == "Max."), 1] <- "Maximum"
   
   return(out)
 }
