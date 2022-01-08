@@ -13,7 +13,8 @@ required_packages <-
     "kableExtra",
     #"fansi",
     "tidyverse",
-    "readxl")
+    "readxl",
+    "plotly")
 
 # Check, install, and load required packages
 using(required_packages)
