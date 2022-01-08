@@ -13,3 +13,5 @@ shopifydata <-
       "/data/raw_data/2019 Winter Data Science Intern Challenge Data Set.xlsx"
     )
   )
+
+message("./scripts/01_loaddata.R was executed.")
