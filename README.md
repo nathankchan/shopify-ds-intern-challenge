@@ -8,12 +8,14 @@
 
 This project contains two parts: 
 
-1. an R Markdown document (knitted to HTML, see link above) on the 2019 Winter Data Science Intern Challenge Data Set; and 
-2. an R script ("program") that produces a .csv file of summary statistics and an interactive HTML histogram-density plot.
+1. an **R Markdown document** (already knit to HTML, see link above); and 
+2. an **R script** ("program") that saves two files to `./output`: 
+  + a .csv file of summary statistics; and 
+  + an interactive HTML histogram-density plot.
 
 It is ***strongly recommended*** that you download and view the report. The report contains my **full thought process**, **interactive visualizations**, and **complete answers for Questions 1 and 2**.
 
-To run the automated analysis, download this repository and run the following command:
+To run the automated analysis, download this repository and run the following command in your terminal:
 
 ```{bash, eval = FALSE}
 
