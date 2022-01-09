@@ -81,11 +81,17 @@ options(crayon.enabled = TRUE)
 
 ***
 
-### Executive Summary
+<br>
 
-a. Consider metrics beyond AOV (i.e., the *arithmetic mean*), such as the *median*, *mode*, *geometric mean*, and *harmonic mean*.
-b. The most appropriate metric to report is the <span style = "color:green">***geometric mean***</span>.
-c. The value of the *geometric mean* is `$285.02`.
+### <span style = "color:red">Executive Summary</span>
+
+a. See [**Part 1a**](#s1.1). There are **outliers** in the dataset. Other measures of central tendency are more appropriate.
+b. See [**Part 1b**](#s1.2). The **most appropriate metric** to report is the <span style = "color:green">***geometric mean***</span>.
+c. See [**Part 1c**](#s1.3). The value of the **geometric mean** is `$285.02`.
+
+<center><span style = "color:blue">*For convenience, summary statements are provided in* ***blue*** *in each section.*</span></center>
+
+<br>
 
 ***
 
@@ -98,8 +104,14 @@ c. The value of the *geometric mean* is `$285.02`.
   * [*knitr*](https://yihui.org/knitr/)
   * [*kableExtra*](https://haozhu233.github.io/kableExtra/)
   * [*tidyverse*](https://www.tidyverse.org/)
+  * [*plotly*](https://plotly.com/r/)
+  * [*htmlwidgets*](https://www.htmlwidgets.org/)
 
 **If any of these packages are not installed, this analysis will ask for your permission to install before proceeding.**
+
+***
+
+### Introduction
 
 To ensure this analysis is reproducible, a series of scripts (see [Appendix](#s3)) are run to initialize the environment and load the `2019 Winter Data Science Intern Challenge Data Set.xlsx` excel file into R. Data are stored in the tibble `shopifydata`. For ease of access and readability, `shopifydata` is also attached to the **R** search path.
 
@@ -154,6 +166,8 @@ The AOV is `$3414.13` (rounded to the nearest cent). It looks like everything ch
 
 <br>
 
+<span style = "color:blue"><center>**TL;DR:** The data contain many **extreme outliers** and **outliers** such that the ***arithmetic mean*** does not represent the center of the distribution for `order_amount`. The </span><span style = "color:green">***geometric mean***</span><span style = "color:blue"> more accurately describes the center for these data.</span></center>
+
 Two key approaches should be considered when evaluating a data set:
 
 1. [**summary statistics**](#summ), and
@@ -164,6 +178,8 @@ Using these approahces, I generate several [**observations**](#obs).
 <br> 
 
 #### Summary statistics {#summ}
+
+<span style = "color:blue"><center>**TL;DR:** The AOV (a.k.a. ***arithmetic mean***) misrepresents the "center" of the distribution for `order_amount`, as it lies far beyond the *3rd quartile*. We should consider other measures of central tendency, such as the **median**, **mode**, **geometric mean**, and **harmonic mean**.</span></center>
 
 First, let's take a look at some summary statistics. We'll use a custom function called `summ_stats()` on `order_amount` to produce the table below. <a name = "tbl2"> </a>
 
@@ -183,9 +199,9 @@ kbl(summarystats,
 
 **Bold rows provide the** ***key metrics*** we're most interested in. That said, let's first take a look at some of the additional information provided. 
 
-The table shows that `order_amount` contains a maximum value of `704000.00` --- far greater than the AOV of `3145.13` (herein described as the "*arithmetic mean*"). It's possible that the *arithmetic mean* is being pulled up by at least one extremely large value in the data. 
+The table shows that `order_amount` contains a *maximum* value of `704000.00` --- far greater than the AOV of `3145.13` (herein described as the "*arithmetic mean*"). It's possible that the *arithmetic mean* is being pulled up by at least one extremely large value in the data. 
 
-Also, the 3rd quartile is `390.00`, which is far less than the *arithmetic mean*. This means that at least 75% of the data is below the *arithmetic mean* of `order_amount`. 
+Also, the *3rd quartile* is `390.00`, which is far less than the *arithmetic mean*. This means that at least 75% of the data is below the *arithmetic mean* of `order_amount`. 
 
 Back to the **key metrics**: ***arithmetic mean, median, mode, geometric mean, and harmonic mean***. These metrics represent different ways of representing the "center" of the data. We'll describe these metrics in greater detail in [**Part 1b**](#s1.2). For now, just note that the *median* (`284.00`), *mode* (`153.00`), *geometric mean* (`285.02`), and *harmonic mean* (`235.32`) are all less than the *arithmetic mean* (`3145.13`).
 
@@ -194,6 +210,8 @@ Together, these suggest that the distribution of `order_amount` is heavily right
 <br>
 
 #### Visualization {#viz}
+
+<center><span style = "color:blue">**TL;DR:** Visualizing the data confirms that the ***arithmetic mean*** is far from the center of the distribution of `order_amount`. Other measures of central tendency more appropriately characterize the center.</span></center>
 
 Let's make a visualization of the distribution of `order_amount`. Using the `ggplot2` and `plotly` packages, we can create an interactive histogram to examine the data.
 
@@ -341,6 +359,8 @@ Even after removing orders values over `20000`, the distribution still appears r
 
 #### Observations {#obs .tabset}
 
+<center><span style = "color:blue">**TL;DR:** **Extreme outliers** might be orders from a wholesaler. **Outliers** might be orders from luxury sneaker shops. The data appear to be **multi-modal**, likely due to the fact that sneakers are purchased in whole numbers.</span></center>
+
 Knowing that these data represent the value of orders from sneaker shops, I suggest several hypotheses and opportunities for further investigation.
 
 ##### Extreme Outliers 
@@ -427,6 +447,8 @@ shopifydata %>%
 
 <br>
 
+<center><span style = "color:blue">**TL;DR:** The most appropriate metric to report is the </span><span style = "color:green">***geometric mean***</span><span style = "color:blue"> as it accurately represents the center of the distribution while accommodating the presence of outliers. The **median** could be easier to conceptualize but has certain drawbacks. Practically speaking, both values are nearly the same for these data.</span></center>
+
 As described earlier in [**Table 2**](#tbl2), several **key metrics** can be considered. These metrics represent different ways of measuring the "center" of a dataset. The most appropriate metric to report depends on the underlying characteristics of the data. 
 
 For convenience, **key metrics** have been reprinted below. The same colours used in [**Figure 2**](#fig2) are applied to highlight the table below. <a name = "tbl3"> </a>
@@ -497,9 +519,9 @@ In any case, reporting the *arithmetic mean*, *mode*, or *harmonic mean* as the 
 
 <br>
 
-The most appropriate metric to report is the <span style = "color:green">***geometric mean***</span>. Its value is `$285.02`.
+<center><span style = "color:blue">The most appropriate metric to report is the </span><span style = "color:green">***geometric mean***</span><span style = "color:blue">. Its value is `$285.02`.</span></center>
 
-If familiarity and comprehensibility are the priority, the *median* could also be reported, though it has drawbacks as described [earlier](#med). 
+If familiarity and comprehensibility are the priority, the **median** could also be reported, though it has drawbacks as described [earlier](#med). 
 
 ***
 
@@ -529,7 +551,7 @@ If familiarity and comprehensibility are the priority, the *median* could also b
 
 <br>
 
-<center>Speedy Express shipped **54** orders in total.</center>
+<span style = "color:blue"><center>Speedy Express shipped **54** orders in total.</center></span>
 
 ```{SQL, eval = FALSE, class.source = 'fold-show'}
 
@@ -555,7 +577,7 @@ WHERE
 
 <br>
 
-<center>The last name of the employee with the most orders is **Peacock**.</center>
+<span style = "color:blue"><center>The last name of the employee with the most orders is **Peacock**.</center></span>
 
 ```{SQL, eval = FALSE, class.source = 'fold-show'}
 
@@ -619,7 +641,7 @@ LIMIT 1;
 
 <br>
 
-<center>The product most ordered by customers in Germany was **Boston Crab Meat**.</center>
+<span style = "color:blue"><center>The product most ordered by customers in Germany was **Boston Crab Meat**.</center></span>
 
 ```{SQL, eval = FALSE, class.source = 'fold-show'}
 
