@@ -4,7 +4,7 @@
 
 **Alternatively, right-click the link below and choose "Save Link As..." to download the analysis report.**
 
-[https://github.com/nathankchan/shopify-ds-intern-challenge/raw/dev/Analysis.html](https://github.com/nathankchan/shopify-ds-intern-challenge/raw/dev/Analysis.html)
+[https://github.com/nathankchan/shopify-ds-intern-challenge/raw/main/Analysis.html](https://github.com/nathankchan/shopify-ds-intern-challenge/raw/main/Analysis.html)
 
 <br>
 
