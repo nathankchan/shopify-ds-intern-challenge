@@ -49,9 +49,9 @@ options(crayon.enabled = TRUE)
     b. [Metric to report](#s1.2)
     c. [Value of metric](#s1.3)
 2. [Question 2: SQL for Northwind](#s2)
-    a. [Response 2.a](#s2.1)
-    b. [Response 2.b](#s2.2)
-    c. [Response 2.c](#s2.3)
+    a. [Speedy Express orders](#s2.1)
+    b. [Employee last name](#s2.2)
+    c. [Product most ordered](#s2.3)
 3. [Appendix](#s3) 
     a. [functions.R](#s3.1)
     b. [00_init.R](#s3.2)
@@ -508,59 +508,181 @@ If familiarity and comprehensibility are the priority, the *median* could also b
 
 ### Prompt
 
-<br>
+<ul>
+  <li style="list-style-type: none;">*For this question you’ll need to use SQL. [Follow this link](https://www.w3schools.com/SQL/TRYSQL.ASP?FILENAME=TRYSQL_SELECT_ALL) to access the data set required for the challenge. Please use queries to answer the following questions. Paste your queries along with your final numerical answers below.*</li>
+  <li style="list-style-type: none;"><br></li>
+  <ol>
+    <li style="list-style-type: lower-alpha;">*How many orders were shipped by Speedy Express in total?*</li>
+    <li style="list-style-type: lower-alpha;">*What is the last name of the employee with the most orders?*</li>
+    <li style="list-style-type: lower-alpha;">*What product was ordered the most by customers in Germany?*</li>
+  </ol>
+</ul>
 
-<center>***Question goes here...***</center>
-
-<br>
-
-*Content in here...*
-
-***
-
-### Getting Started 
-
-<br>
-
-<br>
-
-*Content in here...*
 
 ***
 
-### Part 2a: Response 2a {#s2.1}
+### Part 2a: Speedy Express orders {#s2.1}
 
 <br>
 
-<center>***Question goes here...***</center>
+<center>***How many orders were shipped by Speedy Express in total?***</center>
 
 <br>
 
-*Content in here...*
+<center>Speedy Express shipped **54** orders in total.</center>
+
+```{SQL, eval = FALSE, class.source = 'fold-show'}
+
+SELECT
+  COUNT(*) AS TotalOrders
+FROM
+  Orders
+INNER JOIN
+  Shippers ON Orders.ShipperID = Shippers.ShipperID
+WHERE
+  ShipperName = 'Speedy Express';
+
+```
+
 
 ***
 
-### Part 2b: Response 2b {#s2.2}
+### Part 2b: Employee last name {#s2.2}
 
 <br>
 
-<center>***Question goes here...***</center>
+<center>***What is the last name of the employee with the most orders?***</center>
 
 <br>
 
-*Content in here...*
+<center>The last name of the employee with the most orders is **Peacock**.</center>
+
+```{SQL, eval = FALSE, class.source = 'fold-show'}
+
+--  2b.1 Using MAX() and INNER JOIN
+/*
+NB: 2b.1 is faster than 2b.2 but is less useful if the intention is to rank 
+    employees by number of orders.
+*/
+SELECT
+  LastName
+FROM (
+  SELECT
+    LastName,
+    MAX(TotalOrders) AS MaxTotalOrders
+  FROM (
+    SELECT
+      Employees.LastName,
+      COUNT(*) AS TotalOrders
+    FROM
+      Employees
+    INNER JOIN
+      Orders ON Employees.EmployeeID = Orders.EmployeeID
+    GROUP BY
+      Employees.EmployeeID
+    )
+  );
+
+
+-- 2b.2 Using ORDER BY and LIMIT
+/*
+NB: 2b.2 is slower than 2b.1 but makes it easier to get a table of employees
+    ranked by number of orders.
+*/
+SELECT
+  LastName
+FROM (
+  SELECT
+    Employees.LastName,
+    COUNT(*) AS TotalOrders
+  FROM
+    Employees
+  INNER JOIN
+    Orders ON Employees.EmployeeID = Orders.EmployeeID
+  GROUP BY
+    Employees.EmployeeID
+  ORDER BY
+    TotalOrders DESC
+  )
+LIMIT 1;
+
+```
+
 
 ***
 
-### Part 2c: Response 2c {#s2.3}
+### Part 2c: Product most ordered {#s2.3}
 
 <br>
 
-<center>***Question goes here...***</center>
+<center>***What product was ordered the most by customers in Germany?***</center>
 
 <br>
 
-*Content in here...*
+<center>The product most ordered by customers in Germany was **Boston Crab Meat**.</center>
+
+```{SQL, eval = FALSE, class.source = 'fold-show'}
+
+--  2c.1 Using MAX() and INNER JOIN
+/*
+NB: 2c.1 is slower than 2c.2 but is less useful if the intention is to rank 
+    the most popular products among German customers.
+*/
+SELECT
+  ProductName
+FROM (
+  SELECT
+    ProductName,
+    MAX(SumQty) AS MaxSumQty
+  FROM (
+    SELECT
+      Products.ProductName,
+      SUM(OrderDetails.Quantity) AS SumQty
+    FROM
+      Products
+    INNER JOIN
+      OrderDetails ON Products.ProductID = OrderDetails.ProductID
+    INNER JOIN
+      Orders ON OrderDetails.OrderID = Orders.OrderID
+    INNER JOIN
+      Customers ON Orders.CustomerID = Customers.CustomerID
+    WHERE
+      Customers.Country = 'Germany'
+    GROUP BY
+      OrderDetails.ProductID
+    )
+  );
+
+-- 2c.2 Using ORDER BY and LIMIT
+/*
+NB: 2c.2 is slower than 2c.1 but makes it easier to get a table of the most
+    popular products among German customers.
+*/
+SELECT
+  ProductName
+FROM (
+  SELECT
+    Products.ProductName,
+    SUM(OrderDetails.Quantity) AS SumQty
+  FROM
+    Products
+  INNER JOIN
+    OrderDetails ON Products.ProductID = OrderDetails.ProductID
+  INNER JOIN
+    Orders ON OrderDetails.OrderID = Orders.OrderID
+  INNER JOIN
+    Customers ON Orders.CustomerID = Customers.CustomerID
+  WHERE
+    Customers.Country = 'Germany'
+  GROUP BY
+    OrderDetails.ProductID
+  ORDER BY
+    SumQty DESC
+  )
+LIMIT 1;
+
+```
+
 
 ***
 
