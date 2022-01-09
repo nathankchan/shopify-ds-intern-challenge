@@ -140,5 +140,11 @@ saveWidget(p_out,
            file = paste0(
              getwd(),
              "/output/plot.html"))
+
+# Uncomment the line below to delete dependency files created by saveWidget()
+# Not actually implemented as this should be fixed in htmlwidgets itself...
+
+# unlink(paste0(getwd(), "/output/plot_files"), recursive = TRUE)
+
 message("./scripts/02_analyze.R was executed.")
 message(paste0("Outputs saved to ", getwd(), "/output"))
