@@ -1,20 +1,29 @@
 # Shopify Summer 2022 Data Science Internship Challenge
 
-**To view the analysis report, right-click the link below and choose "Save Link As...".**
-[https://github.com/nathankchan/shopify-ds-intern-challenge/raw/main/Analysis.html](https://github.com/nathankchan/shopify-ds-intern-challenge/raw/main/Analysis.html)
+**Please visit this link for the full report:** 
+
+[https://nathankchan.github.io/shopify-ds-intern-challenge/Analysis.html](https://nathankchan.github.io/shopify-ds-intern-challenge/Analysis.html)
+
+**To visit this project on github, please visit this link:**
+
+[https://github.com/nathankchan/shopify-ds-intern-challenge](https://github.com/nathankchan/shopify-ds-intern-challenge)
 
 ***
 
 This project contains two parts: 
 
-1. an R Markdown document (knitted to HTML, see link above) on the 2019 Winter Data Science Intern Challenge Data Set; and 
-2. an R script ("program") that produces a .csv file of summary statistics and an interactive HTML histogram-density plot.
+1. an **R Markdown document** (already knit to HTML, see [here](https://nathankchan.github.io/shopify-ds-intern-challenge/Analysis.html)); and 
+2. an **R script** ("program") that saves two files to `./output`: 
+    + a .csv file of summary statistics; and 
+    + an interactive HTML histogram-density plot.
 
-It is ***strongly recommended*** that you download and view the report. The report contains my **full thought process**, **interactive visualizations**, and **complete answers for Questions 1 and 2**.
+It is ***strongly recommended*** that you [view the report](https://nathankchan.github.io/shopify-ds-intern-challenge/Analysis.html) (option 1). 
 
-To run the automated analysis, download this repository and run the following command:
+The report contains my **full thought process**, **interactive visualizations**, and **complete answers for Questions 1 and 2**.
 
-```{bash, eval = FALSE}
+To run the automated analysis (option 2), [download the repository](https://github.com/nathankchan/shopify-ds-intern-challenge) and run the following command in your terminal. Note that you must have R installed for the script to execute.
+
+```
 
 cd /path/to/repository
 Rscript run.R
