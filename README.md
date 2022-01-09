@@ -10,8 +10,8 @@ This project contains two parts:
 
 1. an **R Markdown document** (already knit to HTML, see link above); and 
 2. an **R script** ("program") that saves two files to `./output`: 
-  + a .csv file of summary statistics; and 
-  + an interactive HTML histogram-density plot.
+    + a .csv file of summary statistics; and 
+    + an interactive HTML histogram-density plot.
 
 It is ***strongly recommended*** that you [download and view the report](https://github.com/nathankchan/shopify-ds-intern-challenge/raw/main/Analysis.html) (option 1). 
 
