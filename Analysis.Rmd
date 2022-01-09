@@ -166,20 +166,22 @@ The AOV is `$3414.13` (rounded to the nearest cent). It looks like everything ch
 
 <br>
 
-<span style = "color:blue"><center>**TL;DR:** The data contain many **extreme outliers** and **outliers** such that the ***arithmetic mean*** does not represent the center of the distribution for `order_amount`. The </span><span style = "color:green">***geometric mean***</span><span style = "color:blue"> more accurately describes the center for these data.</span></center>
+<span style = "color:blue">**TL;DR:** The data contain many **extreme outliers** and **outliers** such that the ***arithmetic mean*** does not represent the center of the distribution for `order_amount`. The </span><span style = "color:green">***geometric mean***</span><span style = "color:blue"> more accurately describes the center for these data.</span>
+
 
 Two key approaches should be considered when evaluating a data set:
 
 1. [**summary statistics**](#summ), and
 2. [**visualization**](#viz).
 
-Using these approahces, I generate several [**observations**](#obs).
+Using these approaches, I generate several [**observations**](#obs).
 
 <br> 
 
 #### Summary statistics {#summ}
 
-<span style = "color:blue"><center>**TL;DR:** The AOV (a.k.a. ***arithmetic mean***) misrepresents the "center" of the distribution for `order_amount`, as it lies far beyond the *3rd quartile*. We should consider other measures of central tendency, such as the **median**, **mode**, **geometric mean**, and **harmonic mean**.</span></center>
+<span style = "color:blue">**TL;DR:** The AOV (a.k.a. ***arithmetic mean***) misrepresents the "center" of the distribution for `order_amount`, as it lies far beyond the *3rd quartile*. We should consider other measures of central tendency, such as the **median**, **mode**, **geometric mean**, and **harmonic mean**.</span>
+
 
 First, let's take a look at some summary statistics. We'll use a custom function called `summ_stats()` on `order_amount` to produce the table below. <a name = "tbl2"> </a>
 
@@ -211,7 +213,7 @@ Together, these suggest that the distribution of `order_amount` is heavily right
 
 #### Visualization {#viz}
 
-<center><span style = "color:blue">**TL;DR:** Visualizing the data confirms that the ***arithmetic mean*** is far from the center of the distribution of `order_amount`. Other measures of central tendency more appropriately characterize the center.</span></center>
+<span style = "color:blue">**TL;DR:** Visualizing the data confirms that the ***arithmetic mean*** is far from the center of the distribution of `order_amount`. Other measures of central tendency more appropriately characterize the center.</span>
 
 Let's make a visualization of the distribution of `order_amount`. Using the `ggplot2` and `plotly` packages, we can create an interactive histogram to examine the data.
 
@@ -359,7 +361,7 @@ Even after removing orders values over `20000`, the distribution still appears r
 
 #### Observations {#obs .tabset}
 
-<center><span style = "color:blue">**TL;DR:** **Extreme outliers** might be orders from a wholesaler. **Outliers** might be orders from luxury sneaker shops. The data appear to be **multi-modal**, likely due to the fact that sneakers are purchased in whole numbers.</span></center>
+<span style = "color:blue">**TL;DR:** **Extreme outliers** might be orders from a wholesaler. **Outliers** might be orders from luxury sneaker shops. The data appear to be **multi-modal**, likely due to the fact that sneakers are purchased in whole numbers.</span>
 
 Knowing that these data represent the value of orders from sneaker shops, I suggest several hypotheses and opportunities for further investigation.
 
@@ -447,7 +449,7 @@ shopifydata %>%
 
 <br>
 
-<center><span style = "color:blue">**TL;DR:** The most appropriate metric to report is the </span><span style = "color:green">***geometric mean***</span><span style = "color:blue"> as it accurately represents the center of the distribution while accommodating the presence of outliers. The **median** could be easier to conceptualize but has certain drawbacks. Practically speaking, both values are nearly the same for these data.</span></center>
+<span style = "color:blue">**TL;DR:** The most appropriate metric to report is the </span><span style = "color:green">***geometric mean***</span><span style = "color:blue"> as it accurately represents the center of the distribution while accommodating the presence of outliers. The **median** could be easier to conceptualize but has certain drawbacks. Practically speaking, both values are nearly the same for these data.</span>
 
 As described earlier in [**Table 2**](#tbl2), several **key metrics** can be considered. These metrics represent different ways of measuring the "center" of a dataset. The most appropriate metric to report depends on the underlying characteristics of the data. 
 
@@ -519,7 +521,7 @@ In any case, reporting the *arithmetic mean*, *mode*, or *harmonic mean* as the 
 
 <br>
 
-<center><span style = "color:blue">The most appropriate metric to report is the </span><span style = "color:green">***geometric mean***</span><span style = "color:blue">. Its value is `$285.02`.</span></center>
+<span style = "color:blue">The most appropriate metric to report is the </span><span style = "color:green">***geometric mean***</span><span style = "color:blue">. Its value is `$285.02`.</span>
 
 If familiarity and comprehensibility are the priority, the **median** could also be reported, though it has drawbacks as described [earlier](#med). 
 
