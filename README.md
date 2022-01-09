@@ -1,6 +1,7 @@
 # Shopify Summer 2022 Data Science Internship Challenge
 
 **To view the analysis report, right-click the link below and choose "Save Link As...".**
+
 [https://github.com/nathankchan/shopify-ds-intern-challenge/raw/main/Analysis.html](https://github.com/nathankchan/shopify-ds-intern-challenge/raw/main/Analysis.html)
 
 ***
