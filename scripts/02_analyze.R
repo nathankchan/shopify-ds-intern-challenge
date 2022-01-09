@@ -126,6 +126,11 @@ p_out <-
     "</b>",
     "</span>")))
 
+# Check if ./output exists and if not, creates it
+if (!(dir.exists(paste0(getwd(), "/output")))) {
+  dir.create(paste0(getwd(), "/output"))
+}
+
 # Save out the key metrics to csv and plot to HTML file
 write.csv(summarystats, 
           file = paste0(
