@@ -1,0 +1,599 @@
+---
+title: "Shopify DS Intern Challenge"
+author: "Nathan Chan"
+output:
+  html_document:
+    toc: true
+    toc_depth: 4
+    toc_float: 
+      collapsed: true
+      smooth_scroll: true
+    number_sections: false
+    code_folding: hide
+    df_print: paged
+  md_document:
+    variant: markdown_github
+  html_notebook:
+    toc: true
+    toc_depth: 4
+    toc_float: true
+    number_sections: false
+    code_folding: hide
+    df_print: paged
+---
+
+<!-- **Recommended: For HTML document, hide code snippets by choosing the respective option in top right drop-down menu for improved readability.** -->
+<br>
+
+*NB: Show or hide all code snippets using the* `Code` *button located in the upper right corner.*
+
+```{r echo = FALSE, cache = FALSE}
+options(crayon.enabled = TRUE)
+# txtfix <- function(x, options) {
+#   paste0(
+#     '<pre class="r-output"><code>',
+#     fansi::sgr_to_html(x = htmltools::htmlEscape(x), warn = FALSE),
+#     '</code></pre>'
+#   )
+# }
+# knitr::knit_hooks$set(message = txtfix, warning = txtfix, error = txtfix)
+# knitr::knit_hooks$set(document = function(x){
+#   gsub("```\n*```r*\n\n*", "", x)
+# })
+```
+
+#### **Table of Contents**
+
+1. [Question 1: Analysis of AOV](#s1)
+    a. [Evaluate data](#s1.1)
+    b. [Metric to report](#s1.2)
+    c. [Value of metric](#s1.3)
+2. [Question 2: SQL for Northwind](#s2)
+    a. [Response 2.a](#s2.1)
+    b. [Response 2.b](#s2.2)
+    c. [Response 2.c](#s2.3)
+3. [Appendix](#s3) 
+    a. [functions.R](#s3.1)
+    b. [00_init.R](#s3.2)
+    c. [01_loaddata.R](#s3.3)
+
+<br>
+
+***
+
+
+## Question 1: Analysis of AOV {#s1}
+
+### Prompt
+
+*Given some sample data, write a program to answer the following: [click here to access the required data set](https://docs.google.com/spreadsheets/d/16i38oonuX1y1g7C_UAmiK9GkY7cS-64DfiDMNiR41LM/edit#gid=0)*
+
+<ul>
+  <li style="list-style-type: none;">*On Shopify, we have exactly 100 sneaker shops, and each of these shops sells only one model of shoe. We want to do some analysis of the average order value (AOV). When we look at orders data over a 30 day window, we naively calculate an AOV of $3145.13. Given that we know these shops are selling sneakers, a relatively affordable item, something seems wrong with our analysis.*</li>
+  <li style="list-style-type: none;"><br></li>
+  <ol>
+    <li style="list-style-type: lower-alpha;">*Think about what could be going wrong with our calculation. Think about a better way to evaluate this data.*</li>
+    <li style="list-style-type: lower-alpha;">*What metric would you report for this dataset?*</li>
+    <li style="list-style-type: lower-alpha;">*What is its value?*</li>
+  </ol>
+</ul>
+
+
+***
+
+### Executive Summary
+
+a. Consider metrics beyond AOV (i.e., the *arithmetic mean*), such as the *median*, *mode*, *geometric mean*, and *harmonic mean*.
+b. The most appropriate metric to report is the <span style = "color:green">***geometric mean***</span>.
+c. The value of the *geometric mean* is `$285.02`.
+
+***
+
+### Getting started
+
+**This analysis requires** ***R*** **to be installed.** If it is not installed, please visit [r-project.org](https://www.r-project.org/) to download the latest version.
+
+**This analysis requires the following** ***R*** **packages:**
+
+  * [*knitr*](https://yihui.org/knitr/)
+  * [*kableExtra*](https://haozhu233.github.io/kableExtra/)
+  * [*tidyverse*](https://www.tidyverse.org/)
+
+**If any of these packages are not installed, this analysis will ask for your permission to install before proceeding.**
+
+To ensure this analysis is reproducible, a series of scripts (see [Appendix](#s3)) are run to initialize the environment and load the `2019 Winter Data Science Intern Challenge Data Set.xlsx` excel file into R. Data are stored in the tibble `shopifydata`. For ease of access and readability, `shopifydata` is also attached to the **R** search path.
+
+```{r init, collapse = TRUE, message = FALSE, class.source = 'fold-show'}
+
+# NB: If any required packages are missing and you are running this code block
+# within an R Notebook, it will fail to execute properly. This behaviour is
+# intentional and acts as a safety mechanism to ensure the user provides
+# explicit consent before installing packages. If this occurs and you wish to
+# install the packages, copy the code below into your terminal or console, then
+# continue with the rest of this document.
+
+source(paste0(getwd(), "/scripts/01_loaddata.R"))
+attach(shopifydata)
+
+```
+
+<br>
+
+It is generally good practice to examine the data before moving further. `shopifydata` contains `5000` rows and `7` columns describing sales data from sneaker shops. For readability, only the first few rows are displayed. As seen below, order value is contained in the column `order_amount`.
+
+```{r data, message = FALSE, results = 'asis'}
+
+kbl(head(shopifydata), 
+    caption = "Table 1: 2019 Winter Data Science Intern Challenge Data Set") %>%
+  kable_styling("hover", full_width = F)
+
+```
+
+<br>
+
+Let's also quickly confirm that the earlier cited average order value (AOV) is correct.
+
+```{r check}
+
+print(paste0("The AOV is $", mean(order_amount), "."))
+
+```
+
+<br>
+
+The AOV is `$3414.13` (rounded to the nearest cent). It looks like everything checks out!
+
+
+***
+
+### Part 1a: Evaluate data {#s1.1}
+
+<br>
+
+<center>***"Think about what could be going wrong with our calculation. Think about a better way to evaluate this data."***</center>
+
+<br>
+
+Two key approaches should be considered when evaluating a data set:
+
+1. [**summary statistics**](#summ), and
+2. [**visualization**](#viz).
+
+Using these approahces, I generate several [**observations**](#obs).
+
+<br> 
+
+#### Summary statistics {#summ}
+
+First, let's take a look at some summary statistics. We'll use a custom function called `summ_stats()` on `order_amount` to produce the table below. <a name = "tbl2"> </a>
+
+```{r summ-stat, results = 'asis'}
+
+summarystats <- summ_stats(order_amount)
+
+kbl(summarystats, 
+      digits = 2,
+      align = "lr", 
+      caption = "Table 2: Summary of Order Value") %>%
+  kable_styling("hover", full_width = FALSE) %>%
+  row_spec(c(3,4,7:9), bold = TRUE) %>%
+  column_spec(c(1,2), width = "50%")
+
+```
+
+**Bold rows provide the** ***key metrics*** we're most interested in. That said, let's first take a look at some of the additional information provided. 
+
+The table shows that `order_amount` contains a maximum value of `704000.00` --- far greater than the AOV of `3145.13` (herein described as the "*arithmetic mean*"). It's possible that the *arithmetic mean* is being pulled up by at least one extremely large value in the data. 
+
+Also, the 3rd quartile is `390.00`, which is far less than the *arithmetic mean*. This means that at least 75% of the data is below the *arithmetic mean* of `order_amount`. 
+
+Back to the **key metrics**: ***arithmetic mean, median, mode, geometric mean, and harmonic mean***. These metrics represent different ways of representing the "center" of the data. We'll describe these metrics in greater detail in [**Part 1b**](#s1.2). For now, just note that the *median* (`284.00`), *mode* (`153.00`), *geometric mean* (`285.02`), and *harmonic mean* (`235.32`) are all less than the *arithmetic mean* (`3145.13`).
+
+Together, these suggest that the distribution of `order_amount` is heavily right-skewed. We will verify this intuition when we visualize the data in the next section.
+
+<br>
+
+#### Visualization {#viz}
+
+Let's make a visualization of the distribution of `order_amount`. Using the `ggplot2` and `plotly` packages, we can create an interactive histogram to examine the data.
+
+*This plot is interactive. Drag your cursor over the plot to zoom in. Double-click to zoom out. Click on the legend items to hide or show plot elements.*
+
+```{r histogram1, message = FALSE}
+
+binwidth1 <- 10000
+
+p1 <-
+  ggplot(data = shopifydata, aes(x = order_amount)) +
+  geom_histogram(
+    aes(color = "Histogram"),
+    fill = "springgreen4",
+    size = 0,
+    binwidth = binwidth1) +
+  geom_density(
+    # Density plots are usually constrained within [0,1]. However, ggplot 
+    # requires that the y-axis of plots have the same scale. This is a 
+    # workaround to let our density plot display properly.
+    aes(y = ..density.. * nrow(shopifydata) * binwidth1 / 100, color = "Density Plot"),
+    fill = "springgreen4",
+    size = 0,
+    alpha = 0.3) +
+  labs(x = "Order Value ($)", y = "Count") +
+  scale_x_continuous(
+    labels = function(x)
+      format(x, scientific = FALSE)
+  ) +
+  scale_color_manual(
+    name = "Legend",
+    values = c(
+      "Histogram" = "springgreen4",
+      "Density Plot" = "springgreen4"
+    )
+  ) +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# plotly does not support subtitles or captions, so we need to manually define
+# them with HTML as part of the title
+ggplotly(p1) %>%
+  layout(title = list(text = paste0(
+    '<span style = "font-size: 15px;">',
+    "<b>Figure 1: Histogram of Order Value</b>",
+    "</span>")))
+
+```
+
+It's clear that `order_amount` has several **extreme outliers** at `704000`, as well as **outliers** between `20000` to `200000`. While these values are few in number, they are far greater than any of the **key metrics** we considered in the previous section. 
+
+Moreover, we can visually confirm the extreme right skewness of `order_amount`. Our earlier intuition was correct.
+
+Lastly, let's take a look at `order_amount` after we remove any values over `20000`. We'll also plot the **key metrics** directly on the graph.
+
+*This plot is interactive. Drag your cursor over the plot to zoom in. Double-click to zoom out. Click on the legend items to hide or show plot elements. Values of* **key metrics** *are summarized in* [**Table 3**](#tbl3). <a name="fig2"> </a>
+
+```{r histogram2, message = FALSE}
+
+shopifydata_under20000 <- shopifydata %>% filter(order_amount < 20000)
+binwidth2 <- 25
+
+p2 <-
+  ggplot(data = shopifydata_under20000, aes(x = order_amount)) +
+  geom_histogram(
+    aes(color = "Histogram"),
+    fill = "springgreen4",
+    size = 0,
+    binwidth = binwidth2) +
+  geom_density(
+    # Density plots are usually constrained within [0,1]. However, ggplot 
+    # requires that the y-axis of plots have the same scale. This is a 
+    # workaround to let our density plot display properly.
+    aes(y = ..density.. * nrow(shopifydata_under20000) * binwidth2, color = "Density Plot"),
+    fill = "springgreen4",
+    size = 0,
+    alpha = 0.3
+  ) +
+  geom_vline(
+    aes(xintercept = summarystats[which(summarystats == "Arithmetic Mean"), 2], color = "Arithmetic Mean"),
+    linetype = "longdash",
+    size = 0.25,
+  ) +
+  geom_vline(
+    aes(xintercept = summarystats[which(summarystats == "Median"), 2], color = "Median"),
+    linetype = "dotdash",
+    size = 0.25,
+  ) +
+  geom_vline(
+    aes(xintercept = summarystats[which(summarystats == "Mode"), 2], color = "Mode"),
+    linetype = "dotted",
+    size = 0.25,
+  ) +
+  geom_vline(
+    aes(xintercept = summarystats[which(summarystats == "Geometric Mean"), 2], color = "Geometric Mean"),
+    linetype = "twodash",
+    size = 0.25,
+  ) +
+  geom_vline(
+    aes(xintercept = summarystats[which(summarystats == "Harmonic Mean"), 2], color = "Harmonic Mean"),
+    linetype = "dashed",
+    size = 0.25,
+  ) +
+  labs(
+    x = "Order Value ($)",
+    y = "Count"
+  ) +
+  scale_x_continuous(
+    labels = function(x)
+      format(x, scientific = FALSE),
+    guide = guide_legend()
+  ) +
+  scale_color_manual(
+    name = "Key Metrics",
+    values = c(
+      "Histogram" = "springgreen4",
+      "Density Plot" = "springgreen4",
+      "Arithmetic Mean" = "red",
+      "Median" = "blue",
+      "Mode" = "orange",
+      "Geometric Mean" = "green",
+      "Harmonic Mean" = "grey"
+    )
+  ) +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# plotly does not support subtitles or captions, so we need to manually define
+# them with HTML as part of the title
+ggplotly(p2) %>%
+  layout(title = list(text = paste0(
+    '<span style = "font-size: 15px;">',
+    "<b>Figure 2: Histogram of Order Value</b>",
+    "</span>",
+    "<br>",
+    '<span style = "font-size: 14px;">',
+    "<sup>Showing only orders under $20000</sup>",
+    "</span>")))
+
+```
+
+Even after removing orders values over `20000`, the distribution still appears right skewed. Moreover, the distribution appears to be **multi-modal**, with peaks separated at intervals of about `150` to `200` and decreasing in size as order value increases. 
+
+<br>
+
+#### Observations {#obs .tabset}
+
+Knowing that these data represent the value of orders from sneaker shops, I suggest several hypotheses and opportunities for further investigation.
+
+##### Extreme Outliers 
+
+The **extreme outliers** at `order_amount == 704000` could represent bulk orders from a sneaker wholesaler to a retailer. This inference is supported by the following observations:
+
+  * all of these orders were purchased from one shop (`shop_id == 42`);
+  * one user (`user_id == 607`) was responsible for these orders; and
+  * the order quantity for each order was large (`total_items == 2000`).
+
+```{r ex-outliers}
+
+# Select the extreme outliers only
+shopifydata %>% 
+  filter(order_amount > 500000) %>%
+  kbl(., caption = "Table 3: Extreme Outliers") %>%
+  kable_styling("hover", fixed_thead = TRUE) %>%
+  scroll_box(height = "250px")
+
+```
+
+<br>
+
+***
+
+##### Outliers
+
+The **outliers** between `20000` to `200000` could represent orders from a luxury sneaker retailer. This inference is supported by the following observations:
+
+  * all of these orders were purchased from one shop (`shop_id == 78`);
+  * the order quantity for each order was small (`total_items` between `1` to `6`); and
+  * the unit cost for each order was large and constant (`order_amount == 25725`).
+
+```{r outliers}
+
+# Select the outliers and compute the unit cost for each row
+shopifydata %>% 
+  filter(order_amount > 20000 & order_amount < 500000) %>%
+  mutate(unit_cost = order_amount / total_items) %>%
+  kbl(.,
+      caption = "Table 4: Outliers") %>%
+  kable_styling("hover", fixed_thead = TRUE) %>%
+  scroll_box(height = "250px")
+
+```
+
+<br>
+
+***
+
+##### Multi-Modality
+
+The **multi-modal** distribution, especially when examining the data with outliers excluded, could emerge due to the discreteness of the underlying data structure. 
+
+This discreteness could be attributed to the typical unit cost of sneakers of about `150` (note that all key metrics have approximately the same value in the table below) and that sneakers are always purchased as multiples of whole numbers (i.e., `total_items` is always a positive non-zero integer).
+
+```{r multi-modal}
+
+# Exclude the outliers and compute the unit cost, then summarize in a table
+shopifydata %>% 
+  filter(order_amount < 20000) %>%
+  mutate(unit_cost = order_amount / total_items) %>%
+  pull(unit_cost) %>%
+  summ_stats() %>%
+  kbl(., 
+      digits = 2,
+      align = "lr", 
+      caption = "Table 5: Summary of Unit Cost Excluding Outliers") %>%
+  kable_styling("hover", full_width = FALSE) %>%
+  row_spec(c(3,4,7:9), bold = TRUE) %>%
+  column_spec(c(1,2), width = "50%")
+
+```
+
+<br>
+
+***
+
+### Part 1b: Metric to report {#s1.2}
+
+<br>
+
+<center>***What metric would you report for this dataset?***</center>
+
+<br>
+
+As described earlier in [**Table 2**](#tbl2), several **key metrics** can be considered. These metrics represent different ways of measuring the "center" of a dataset. The most appropriate metric to report depends on the underlying characteristics of the data. 
+
+For convenience, **key metrics** have been reprinted below. The same colours used in [**Figure 2**](#fig2) are applied to highlight the table below. <a name = "tbl3"> </a>
+
+```{r key-metrics, results = 'asis'}
+
+keymetrics <- summarystats[c(4,3,7:9),]
+row.names(keymetrics) <- NULL
+
+kable(keymetrics, 
+      digits = 2,
+      align = "lr", 
+      caption = "Table 3: Key Metrics") %>%
+  kable_styling("hover", full_width = FALSE) %>%
+  row_spec(1, italic = TRUE, color = "red") %>%
+  row_spec(2, color = "blue") %>%
+  row_spec(3, color = "orange") %>%
+  row_spec(4, bold = TRUE, color = "lime", background = "black") %>%
+  row_spec(5, color = "grey") %>%
+  column_spec(c(1,2), width = "50%")
+
+```
+
+Of these metrics, I argue that the <span style = "color:green">***geometric mean***</span> is the most appropriate. As seen in below, the *geometric mean* lies at the approximate "center" of the distribution.
+
+*This plot is interactive. Drag your cursor over the plot to zoom in. Double-click to zoom out. Click on the legend items to hide or show plot elements.*
+
+```{r}
+
+p3 <- p2 +
+  coord_cartesian(xlim = c(0,1000))
+
+# plotly does not support subtitles or captions, so we need to manually define
+# them with HTML as part of the title
+ggplotly(p3) %>%
+  layout(title = list(text = paste0(
+    '<span style = "font-size: 15px;">',
+    "<b>Figure 3: Histogram of Order Value</b>",
+    "</span>",
+    "<br>",
+    '<span style = "font-size: 14px;">',
+    "<sup>Showing only orders under $20000</sup>",
+    "<br>",
+    "<sup>Zoomed in from $0 to $1000",
+    "</span>")))
+
+```
+
+
+While this metric is often used for data with multiplicative relationships (e.g., interest rates or ratios), it is also useful when data do not exist on the same scale or have large outliers. In other words, the *geometric mean* is less susceptible to skew effects than other metrics. The *geometric mean* also makes full use of the available data.
+
+With that said, the *geometric mean could be unfamiliar to lay audiences*. If familiarity and comprehensibility are the priority, then the **median** may be more appropriate. In this particular case, the *geometric mean* and *median* are extremely close, and both metrics appear to lie at the "center" of the distribution. Either metric might be acceptable.
+
+Nevertheless, both the *geometric mean* and the *median* have drawbacks. Although not a concern for this dataset, it should be noted that the *geometric mean* is not defined when the data have meaningful zeros or negative numbers. 
+
+<a name="med"> </a>
+Meanwhile, the *median* (and *mode*) ignore parts of the data. For example, say a particular sneaker that cost `$150` became a viral phenomenon in the next month of data (i.e., April 2017), accounting for the lowest 51% of orders. Meanwhile, the remaining 49% of orders cost anywhere from `$151` to `$704000`. This could make the *median* misleading to report as it would be far from the "center" of the distribution. Since the *median* only considers the "middle" of the data, it remains susceptible to skew effects. 
+
+In any case, reporting the *arithmetic mean*, *mode*, or *harmonic mean* as the "center" of the dataset would be inappropriate. As already seen, the *arithmetic mean* is extremely susceptible to outliers. The *mode* does not characterize the "center" of the data, but instead focuses on the most frequent values. Finally, the *harmonic mean* is more appropriate for averaging rates or ratios and not (raw) values like order value.
+
+***
+
+### Part 1c: Value of metric {#s1.3}
+
+<br>
+
+<center>***What is [the metric's] value?***</center>
+
+<br>
+
+The most appropriate metric to report is the <span style = "color:green">***geometric mean***</span>. Its value is `$285.02`.
+
+If familiarity and comprehensibility are the priority, the *median* could also be reported, though it has drawbacks as described [earlier](#med). 
+
+***
+
+## Question 2: SQL for Northwind {#s2}
+
+
+### Prompt
+
+<br>
+
+<center>***Question goes here...***</center>
+
+<br>
+
+*Content in here...*
+
+***
+
+### Getting Started 
+
+<br>
+
+<br>
+
+*Content in here...*
+
+***
+
+### Part 2a: Response 2a {#s2.1}
+
+<br>
+
+<center>***Question goes here...***</center>
+
+<br>
+
+*Content in here...*
+
+***
+
+### Part 2b: Response 2b {#s2.2}
+
+<br>
+
+<center>***Question goes here...***</center>
+
+<br>
+
+*Content in here...*
+
+***
+
+### Part 2c: Response 2c {#s2.3}
+
+<br>
+
+<center>***Question goes here...***</center>
+
+<br>
+
+*Content in here...*
+
+***
+
+## Appendix {#s3 .tabset}
+
+***
+
+### functions.R {#s3.1}
+
+```{bash functions.R, comment = ''}
+
+cat R/functions.R
+
+```
+
+***
+
+### 00_init.R {#s3.2}
+
+```{bash 00_init.R, comment = ''}
+
+cat scripts/00_init.R
+
+```
+
+***
+
+### 01_loaddata.R {#s3.3}
+
+```{bash 01_loaddata.R, comment = ''}
+
+cat scripts/01_loaddata.R
+
+```
+
+***
