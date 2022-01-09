@@ -21,7 +21,7 @@ The report contains my **full thought process**, **interactive visualizations**,
 
 To run the automated analysis (option 2), download this repository and run the following command in your terminal. Note that you must have R installed for the script to execute.
 
-```{bash, eval = FALSE}
+```
 
 cd /path/to/repository
 Rscript run.R
