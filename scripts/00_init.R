@@ -4,9 +4,11 @@
 # Author: N. Chan
 # Purpose: Initializes project and installs required dependencies.
 
+# Load up custom functions
 source(paste0(getwd(), "/R/functions.R"))
 message("./R/functions.R is loaded.")
 
+# List of required packages for analysis
 required_packages <-
   c(
     "knitr",
@@ -14,7 +16,8 @@ required_packages <-
     #"fansi",
     "tidyverse",
     "readxl",
-    "plotly")
+    "plotly",
+    "htmlwidgets")
 
 # Check, install, and load required packages
 using(required_packages)
