@@ -253,14 +253,14 @@ p1 <-
       format(x, scientific = FALSE)
   ) +
   scale_color_manual(
-    name = "Legend",
     values = c(
       "Histogram" = "springgreen4",
       "Density Plot" = "springgreen4"
     )
   ) +
   theme_classic() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1))
 
 # plotly does not support subtitles or captions, so we need to manually define
 # them with HTML as part of the title
@@ -269,8 +269,8 @@ ggplotly(p1) %>%
     '<span style = "font-size: 15px;">',
     "<b>Figure 1: Histogram of Order Value</b>",
     "</span>")),
-    autosize = TRUE
-    )
+    legend = list(
+      orientation = "h", x = 0.5, y = -0.25, xanchor = "center"))
 
 ```
 
@@ -340,7 +340,7 @@ p2 <-
     guide = guide_legend()
   ) +
   scale_color_manual(
-    name = "Key Metrics",
+    name = "",
     values = c(
       "Histogram" = "springgreen4",
       "Density Plot" = "springgreen4",
@@ -352,7 +352,8 @@ p2 <-
     )
   ) +
   theme_classic() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1))
 
 # plotly does not support subtitles or captions, so we need to manually define
 # them with HTML as part of the title
@@ -364,7 +365,9 @@ ggplotly(p2) %>%
     "<br>",
     '<span style = "font-size: 14px;">',
     "<sup>Showing only orders under $20000</sup>",
-    "</span>")))
+    "</span>")),
+    legend = list(
+      orientation = "h", x = 0.5, y = -0.25, xanchor = "center"))
 
 ```
 
@@ -513,10 +516,10 @@ ggplotly(p3) %>%
     "</span>",
     "<br>",
     '<span style = "font-size: 14px;">',
-    "<sup>Showing only orders under $20000</sup>",
-    "<br>",
-    "<sup>Zoomed in from $0 to $1000",
-    "</span>")))
+    "<sup>Showing only orders under $20000 | Zoomed in from $0 to $1000</sup>",
+    "</span>")),
+    legend = list(
+      orientation = "h", x = 0.5, y = -0.25, xanchor = "center"))
 
 ```
 
