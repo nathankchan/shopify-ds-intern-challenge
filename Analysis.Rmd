@@ -1,5 +1,5 @@
 ---
-title: "Shopify DS Intern Challenge"
+title: "Shopify Data Science Intern Challenge"
 author: "Nathan Chan"
 output:
   html_document:
@@ -23,9 +23,13 @@ output:
 ---
 
 <!-- **Recommended: For HTML document, hide code snippets by choosing the respective option in top right drop-down menu for improved readability.** -->
-<br>
+***
+
+**To visit this project on GitHub, please visit this link:** [https://github.com/nathankchan/shopify-ds-intern-challenge](https://github.com/nathankchan/shopify-ds-intern-challenge)
 
 *NB: Show or hide all code snippets using the* `Code` *button located in the upper right corner.*
+
+***
 
 ```{r echo = FALSE, cache = FALSE}
 options(crayon.enabled = TRUE)
@@ -42,6 +46,7 @@ options(crayon.enabled = TRUE)
 # })
 ```
 
+
 #### **Table of Contents**
 
 1. [Question 1: Analysis of AOV](#s1)
@@ -53,11 +58,12 @@ options(crayon.enabled = TRUE)
     b. [Employee last name](#s2.2)
     c. [Product most ordered](#s2.3)
 3. [Appendix](#s3) 
-    a. [functions.R](#s3.1)
-    b. [00_init.R](#s3.2)
-    c. [01_loaddata.R](#s3.3)
-
-<br>
+    a. [./R/functions.R](#s3.1)
+    b. [./scripts/00_init.R](#s3.2)
+    c. [./scripts/01_loaddata.R](#s3.3)
+    d. [./scripts/02_analyze.R](#s3.4)
+    e. [./scripts/03_question2.sql](#3.5)
+    f. [./run.R](#3.6)
 
 ***
 
@@ -81,8 +87,6 @@ options(crayon.enabled = TRUE)
 
 ***
 
-<br>
-
 ### <span style = "color:red">Executive Summary</span>
 
 a. See [**Part 1a**](#s1.1). There are **outliers** in the dataset. Other measures of central tendency are more appropriate.
@@ -90,8 +94,6 @@ b. See [**Part 1b**](#s1.2). The **most appropriate metric** to report is the <s
 c. See [**Part 1c**](#s1.3). The value of the **geometric mean** is `$285.02`.
 
 <center><span style = "color:blue">*For convenience, summary statements are provided in* ***blue*** *in each section.*</span></center>
-
-<br>
 
 ***
 
@@ -113,7 +115,7 @@ c. See [**Part 1c**](#s1.3). The value of the **geometric mean** is `$285.02`.
 
 ### Introduction
 
-To ensure this analysis is reproducible, a series of scripts (see [Appendix](#s3)) are run to initialize the environment and load the `2019 Winter Data Science Intern Challenge Data Set.xlsx` excel file into R. Data are stored in the tibble `shopifydata`. For ease of access and readability, `shopifydata` is also attached to the **R** search path.
+To ensure this analysis is reproducible, a series of scripts (see [Appendix](#s3)) are run to initialize the environment and load the "2019 Winter Data Science Intern Challenge Data Set.xlsx" excel file into R. Data are stored in the tibble `shopifydata`. For ease of access and readability, `shopifydata` is also attached to the **R** search path.
 
 ```{r init, collapse = TRUE, message = FALSE, class.source = 'fold-show'}
 
@@ -133,11 +135,13 @@ attach(shopifydata)
 
 It is generally good practice to examine the data before moving further. `shopifydata` contains `5000` rows and `7` columns describing sales data from sneaker shops. For readability, only the first few rows are displayed. As seen below, order value is contained in the column `order_amount`.
 
-```{r data, message = FALSE, results = 'asis'}
+```{r data, message = FALSE, results = 'asis', out.width = '100%'}
 
 kbl(head(shopifydata), 
     caption = "Table 1: 2019 Winter Data Science Intern Challenge Data Set") %>%
-  kable_styling("hover", full_width = F)
+  kable_styling("hover", full_width = F) %>%
+  scroll_box(
+    height = "250px")
 
 ```
 
@@ -185,7 +189,7 @@ Using these approaches, I generate several [**observations**](#obs).
 
 First, let's take a look at some summary statistics. We'll use a custom function called `summ_stats()` on `order_amount` to produce the table below. <a name = "tbl2"> </a>
 
-```{r summ-stat, results = 'asis'}
+```{r summ-stat, results = 'asis', out.width='100%'}
 
 summarystats <- summ_stats(order_amount)
 
@@ -195,9 +199,14 @@ kbl(summarystats,
       caption = "Table 2: Summary of Order Value") %>%
   kable_styling("hover", full_width = FALSE) %>%
   row_spec(c(3,4,7:9), bold = TRUE) %>%
-  column_spec(c(1,2), width = "50%")
+  column_spec(c(1,2), width = "50%") %>%
+  scroll_box(
+    width = "100%",
+    box_css = "border: 0px solid #ddd; padding: 5px; ")
 
 ```
+
+<br>
 
 **Bold rows provide the** ***key metrics*** we're most interested in. That said, let's first take a look at some of the additional information provided. 
 
@@ -219,7 +228,7 @@ Let's make a visualization of the distribution of `order_amount`. Using the `ggp
 
 *This plot is interactive. Drag your cursor over the plot to zoom in. Double-click to zoom out. Click on the legend items to hide or show plot elements.*
 
-```{r histogram1, message = FALSE}
+```{r histogram1, message = FALSE, out.width = '100%'}
 
 binwidth1 <- 10000
 
@@ -259,9 +268,13 @@ ggplotly(p1) %>%
   layout(title = list(text = paste0(
     '<span style = "font-size: 15px;">',
     "<b>Figure 1: Histogram of Order Value</b>",
-    "</span>")))
+    "</span>")),
+    autosize = TRUE
+    )
 
 ```
+
+<br>
 
 It's clear that `order_amount` has several **extreme outliers** at `704000`, as well as **outliers** between `20000` to `200000`. While these values are few in number, they are far greater than any of the **key metrics** we considered in the previous section. 
 
@@ -271,7 +284,7 @@ Lastly, let's take a look at `order_amount` after we remove any values over `200
 
 *This plot is interactive. Drag your cursor over the plot to zoom in. Double-click to zoom out. Click on the legend items to hide or show plot elements. Values of* **key metrics** *are summarized in* [**Table 3**](#tbl3). <a name="fig2"> </a>
 
-```{r histogram2, message = FALSE}
+```{r histogram2, message = FALSE, out.width='100%'}
 
 shopifydata_under20000 <- shopifydata %>% filter(order_amount < 20000)
 binwidth2 <- 25
@@ -355,6 +368,8 @@ ggplotly(p2) %>%
 
 ```
 
+<br>
+
 Even after removing orders values over `20000`, the distribution still appears right skewed. Moreover, the distribution appears to be **multi-modal**, with peaks separated at intervals of about `150` to `200` and decreasing in size as order value increases. 
 
 <br>
@@ -433,7 +448,10 @@ shopifydata %>%
       caption = "Table 5: Summary of Unit Cost Excluding Outliers") %>%
   kable_styling("hover", full_width = FALSE) %>%
   row_spec(c(3,4,7:9), bold = TRUE) %>%
-  column_spec(c(1,2), width = "50%")
+  column_spec(c(1,2), width = "50%") %>%
+  scroll_box(
+    width = "100%",
+    box_css = "border: 0px solid #ddd; padding: 5px; ")
 
 ```
 
@@ -470,7 +488,10 @@ kable(keymetrics,
   row_spec(3, color = "orange") %>%
   row_spec(4, bold = TRUE, color = "lime", background = "black") %>%
   row_spec(5, color = "grey") %>%
-  column_spec(c(1,2), width = "50%")
+  column_spec(c(1,2), width = "50%") %>%
+  scroll_box(
+    width = "100%",
+    box_css = "border: 0px solid #ddd; padding: 5px; ")
 
 ```
 
@@ -478,7 +499,7 @@ Of these metrics, I argue that the <span style = "color:green">***geometric mean
 
 *This plot is interactive. Drag your cursor over the plot to zoom in. Double-click to zoom out. Click on the legend items to hide or show plot elements.*
 
-```{r}
+```{r histogram3, message = FALSE, out.width = '100%'}
 
 p3 <- p2 +
   coord_cartesian(xlim = c(0,1000))
@@ -499,6 +520,7 @@ ggplotly(p3) %>%
 
 ```
 
+<br>
 
 While this metric is often used for data with multiplicative relationships (e.g., interest rates or ratios), it is also useful when data do not exist on the same scale or have large outliers. In other words, the *geometric mean* is less susceptible to skew effects than other metrics. The *geometric mean* also makes full use of the available data.
 
@@ -555,7 +577,7 @@ If familiarity and comprehensibility are the priority, the **median** could also
 
 <span style = "color:blue"><center>Speedy Express shipped **54** orders in total.</center></span>
 
-```{SQL, eval = FALSE, class.source = 'fold-show'}
+```{sql, eval = FALSE, class.source = 'fold-show'}
 
 SELECT
   COUNT(*) AS TotalOrders
@@ -581,7 +603,7 @@ WHERE
 
 <span style = "color:blue"><center>The last name of the employee with the most orders is **Peacock**.</center></span>
 
-```{SQL, eval = FALSE, class.source = 'fold-show'}
+```{sql, eval = FALSE, class.source = 'fold-show'}
 
 --  2b.1 Using MAX() and INNER JOIN
 /*
@@ -645,7 +667,7 @@ LIMIT 1;
 
 <span style = "color:blue"><center>The product most ordered by customers in Germany was **Boston Crab Meat**.</center></span>
 
-```{SQL, eval = FALSE, class.source = 'fold-show'}
+```{sql, eval = FALSE, class.source = 'fold-show'}
 
 --  2c.1 Using MAX() and INNER JOIN
 /*
@@ -714,31 +736,67 @@ LIMIT 1;
 
 ***
 
-### functions.R {#s3.1}
+### ./R/functions.R {#s3.1}
 
 ```{bash functions.R, comment = ''}
 
-cat R/functions.R
+cat ./R/functions.R
 
 ```
 
 ***
 
-### 00_init.R {#s3.2}
+### ./scripts/00_init.R {#s3.2}
 
 ```{bash 00_init.R, comment = ''}
 
-cat scripts/00_init.R
+cat ./scripts/00_init.R
 
 ```
 
 ***
 
-### 01_loaddata.R {#s3.3}
+### ./scripts/01_loaddata.R {#s3.3}
 
 ```{bash 01_loaddata.R, comment = ''}
 
-cat scripts/01_loaddata.R
+cat ./scripts/01_loaddata.R
+
+```
+
+***
+
+### ./scripts/02_analyze.R {#s3.4}
+
+*NB: Script not used in report. Provided as option for custom analysis.*
+
+```{bash 02_analyze.R, comment = ''}
+
+cat ./scripts/02_analyze.R
+
+```
+
+***
+
+### ./scripts/03_question2.sql {#s3.5}
+
+*NB: Script not used in report.*
+
+```{bash 03_question2.sql, comment = ''}
+
+cat ./scripts/03_question2.sql
+
+```
+
+***
+
+### ./run.R {#s3.6}
+
+*NB: Script not used in report. Provided as option for custom analysis.*
+
+```{bash run.R, comment = ''}
+
+cat ./run.R
 
 ```
 
