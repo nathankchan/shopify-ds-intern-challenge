@@ -1,8 +1,6 @@
 # Shopify Summer 2022 Data Science Internship Challenge
 
-**Prepared by Nathan Chan**
-
-<br>
+***Prepared by Nathan Chan***
 
 **Please visit this link for the full report:** 
 
