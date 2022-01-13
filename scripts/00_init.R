@@ -17,7 +17,8 @@ required_packages <-
     "tidyverse",
     "readxl",
     "plotly",
-    "htmlwidgets")
+    "htmlwidgets",
+    "shiny")
 
 # Check, install, and load required packages
 using(required_packages)

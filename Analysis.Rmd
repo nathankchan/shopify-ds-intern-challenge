@@ -64,6 +64,7 @@ options(crayon.enabled = TRUE)
     d. [./scripts/02_analyze.R](#s3.4)
     e. [./scripts/03_question2.sql](#3.5)
     f. [./run.R](#3.6)
+    g. [./app.R](#3.7)
 
 ***
 
@@ -93,7 +94,16 @@ a. See [**Part 1a**](#s1.1). There are **outliers** in the dataset. Other measur
 b. See [**Part 1b**](#s1.2). The **most appropriate metric** to report is the <span style = "color:green">***geometric mean***</span>.
 c. See [**Part 1c**](#s1.3). The value of the **geometric mean** is `$285.02`.
 
+<br>
+
 <center><span style = "color:blue">*For convenience, summary statements are provided in* ***blue*** *in each section.*</span></center>
+
+<br>
+
+<center>*Also, if you already have R installed, consider downloading this project from GitHub [here](https://github.com/nathankchan/shopify-ds-intern-challenge) to run your own custom analysis!*
+
+*Open a terminal, navigate to the repo, and type in `Rscript app.R` for an interactive GUI that produces histogram-density plots and key metrics.*</center>
+
 
 ***
 
@@ -108,6 +118,7 @@ c. See [**Part 1c**](#s1.3). The value of the **geometric mean** is `$285.02`.
   * [*tidyverse*](https://www.tidyverse.org/)
   * [*plotly*](https://plotly.com/r/)
   * [*htmlwidgets*](https://www.htmlwidgets.org/)
+  * [*shiny*](https://shiny.rstudio.com/) (to run app.R only)
 
 **If any of these packages are not installed, this analysis will ask for your permission to install before proceeding.**
 
@@ -800,6 +811,18 @@ cat ./scripts/03_question2.sql
 ```{bash run.R, comment = ''}
 
 cat ./run.R
+
+```
+
+***
+
+### ./app.R {#s3.7}
+
+*NB: Script not used in report. Provided as option for custom analysis.*
+
+```{bash app.R, comment = ''}
+
+cat ./app.R
 
 ```
 
