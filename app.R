@@ -14,6 +14,9 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
+      h5("Prepared by Nathan Chan"),
+      h6("for the Shopify Summer 2022 Data Science Intern Challenge"),
+      br(),
       helpText("Select your file and specify the settings below."),
       fileInput(inputId = "xlsxfile", "Select Excel File", accept = ".xlsx", multiple = FALSE),
       selectInput("selectedcolumn", "Choose Column (must be numeric)", choices = c("")),
