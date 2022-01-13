@@ -100,9 +100,9 @@ c. See [**Part 1c**](#s1.3). The value of the **geometric mean** is `$285.02`.
 
 <br>
 
-<center>*Also, if you already have R installed, consider downloading this project from GitHub [here](https://github.com/nathankchan/shopify-ds-intern-challenge) to run your own custom analysis!*
+<center>*If you already have R installed, consider* [**downloading this project from GitHub**](https://github.com/nathankchan/shopify-ds-intern-challenge) *to run your own custom analysis! Open a terminal, navigate to the repo, and type in `Rscript app.R` for an interactive GUI that produces histogram-density plots and key metrics.*
 
-*Open a terminal, navigate to the repo, and type in `Rscript app.R` for an interactive GUI that produces histogram-density plots and key metrics.*</center>
+*Alternatively, visit the* [**Histogram-Density Plot Viewer**](https://nathankchan.shinyapps.io/Histogram-Density_Plot_Viewer) *Shiny app online and upload your data for your own interactive analysis.*</center>
 
 
 ***
